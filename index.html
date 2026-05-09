@@ -1,0 +1,532 @@
+Here it is — select everything below and copy it:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TheBoltGames - Free Online Games</title>
+  <meta name="description" content="Play free online games instantly. No downloads, no signups. Just click and play."/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --card: #1a1a26;
+      --border: #2a2a3a;
+      --accent: #f5c400;
+      --accent2: #ff4d4d;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(245,196,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,196,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo span { color: var(--text); }
+    .logo-bolt { font-size: 1.5rem; }
+
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--accent); }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(245,196,0,0.1);
+      border: 1px solid rgba(245,196,0,0.3);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 2px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 .highlight { color: var(--accent); }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    .search-bar {
+      max-width: 480px;
+      margin: 0 auto 3rem;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.9rem 1.2rem 0.9rem 3rem;
+      font-family: 'Barlow', sans-serif;
+      font-size: 1rem;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-bar input:focus { border-color: var(--accent); }
+    .search-bar input::placeholder { color: var(--muted); }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .categories {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 2rem 3rem;
+    }
+
+    .cat-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.5rem 1.2rem;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cat-btn:hover, .cat-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    .section {
+      position: relative;
+      z-index: 1;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .game-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      display: block;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 32px rgba(245,196,0,0.15);
+    }
+
+    .game-thumb-placeholder {
+      width: 100%;
+      aspect-ratio: 16/10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--surface), var(--border));
+    }
+
+    .game-info { padding: 0.75rem 1rem; }
+
+    .game-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .game-tag {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .game-card:hover .game-title { color: var(--accent); }
+
+    .game-card.featured { grid-column: span 2; }
+    .game-card.featured .game-thumb-placeholder { aspect-ratio: 16/7; font-size: 4rem; }
+
+    #play-page {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 200;
+      flex-direction: column;
+    }
+
+    #play-page.active { display: flex; }
+
+    .play-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .back-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.4rem 1rem;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .play-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      color: var(--accent);
+    }
+
+    #game-frame { flex: 1; width: 100%; border: none; background: #000; }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer a { color: var(--muted); text-decoration: none; margin: 0 0.5rem; }
+    footer a:hover { color: var(--accent); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .game-card:nth-child(1) { animation-delay: 0.05s; }
+    .game-card:nth-child(2) { animation-delay: 0.1s; }
+    .game-card:nth-child(3) { animation-delay: 0.15s; }
+    .game-card:nth-child(4) { animation-delay: 0.2s; }
+    .game-card:nth-child(5) { animation-delay: 0.25s; }
+    .game-card:nth-child(6) { animation-delay: 0.3s; }
+    .game-card:nth-child(7) { animation-delay: 0.35s; }
+    .game-card:nth-child(8) { animation-delay: 0.4s; }
+
+    .ad-slot {
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 0 auto 2rem;
+    }
+
+    .ad-slot-banner { width: 100%; max-width: 728px; height: 90px; }
+
+    @media (max-width: 600px) {
+      .game-card.featured { grid-column: span 1; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">
+    <span class="logo-bolt">⚡</span>The<span>Bolt</span>Games
+  </a>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">Action</a>
+    <a href="#">Puzzle</a>
+    <a href="#">Racing</a>
+    <a href="#">Sports</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">⚡ 100% Free — No Download — Play Instantly</div>
+  <h1>Play Games.<br><span class="highlight">Anywhere. Anytime.</span></h1>
+  <p>Hundreds of free online games. Click and play instantly — no sign up required.</p>
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search games..." oninput="filterGames()"/>
+  </div>
+</div>
+
+<div class="categories">
+  <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
+  <button class="cat-btn" onclick="filterCategory('action', this)">Action</button>
+  <button class="cat-btn" onclick="filterCategory('puzzle', this)">Puzzle</button>
+  <button class="cat-btn" onclick="filterCategory('racing', this)">Racing</button>
+  <button class="cat-btn" onclick="filterCategory('sports', this)">Sports</button>
+  <button class="cat-btn" onclick="filterCategory('io', this)">.io Games</button>
+</div>
+
+<div style="display:flex; justify-content:center; padding: 0 2rem 2rem; position:relative; z-index:1;">
+  <div class="ad-slot ad-slot-banner">Ad</div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <h2>🔥 Featured</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="game-grid" id="gameGrid">
+
+    <a class="game-card featured" href="#" onclick="playGame('Slope', 'https://slope-game.github.io/', event)">
+      <div class="game-thumb-placeholder">🏂</div>
+      <div class="game-info"><div class="game-title">Slope</div><div class="game-tag">Action</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="io" onclick="playGame('Agar.io', 'https://agar.io/', event)">
+      <div class="game-thumb-placeholder">🟢</div>
+      <div class="game-info"><div class="game-title">Agar.io</div><div class="game-tag">.io Games</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="puzzle" onclick="playGame('2048', 'https://play2048.co/', event)">
+      <div class="game-thumb-placeholder">🔢</div>
+      <div class="game-info"><div class="game-title">2048</div><div class="game-tag">Puzzle</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="action" onclick="playGame('Retro Bowl', 'https://retrobowl.me/', event)">
+      <div class="game-thumb-placeholder">🏈</div>
+      <div class="game-info"><div class="game-title">Retro Bowl</div><div class="game-tag">Sports</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="io" onclick="playGame('Slither.io', 'https://slither.io/', event)">
+      <div class="game-thumb-placeholder">🐍</div>
+      <div class="game-info"><div class="game-title">Slither.io</div><div class="game-tag">.io Games</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="puzzle" onclick="playGame('Sudoku', 'https://sudoku.com/', event)">
+      <div class="game-thumb-placeholder">🧩</div>
+      <div class="game-info"><div class="game-title">Sudoku</div><div class="game-tag">Puzzle</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="racing" onclick="playGame('Madalin Stunt Cars', 'https://madalinstuntcars2.com/', event)">
+      <div class="game-thumb-placeholder">🚗</div>
+      <div class="game-info"><div class="game-title">Madalin Stunt Cars</div><div class="game-tag">Racing</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="action" onclick="playGame('Shell Shockers', 'https://shellshock.io/', event)">
+      <div class="game-thumb-placeholder">🥚</div>
+      <div class="game-info"><div class="game-title">Shell Shockers</div><div class="game-tag">Action</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="puzzle" onclick="playGame('Wordle', 'https://www.nytimes.com/games/wordle/index.html', event)">
+      <div class="game-thumb-placeholder">📝</div>
+      <div class="game-info"><div class="game-title">Wordle</div><div class="game-tag">Puzzle</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="io" onclick="playGame('Krunker.io', 'https://krunker.io/', event)">
+      <div class="game-thumb-placeholder">🎯</div>
+      <div class="game-info"><div class="game-title">Krunker.io</div><div class="game-tag">.io Games</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="sports" onclick="playGame('Basketball Stars', 'https://www.miniclip.com/games/basketball-stars/', event)">
+      <div class="game-thumb-placeholder">🏀</div>
+      <div class="game-info"><div class="game-title">Basketball Stars</div><div class="game-tag">Sports</div></div>
+    </a>
+
+    <a class="game-card" href="#" data-cat="action" onclick="playGame('1v1.LOL', 'https://1v1.lol/', event)">
+      <div class="game-thumb-placeholder">🎮</div>
+      <div class="game-info"><div class="game-title">1v1.LOL</div><div class="game-tag">Action</div></div>
+    </a>
+
+  </div>
+</div>
+
+<div id="play-page">
+  <div class="play-header">
+    <button class="back-btn" onclick="closGame()">← Back</button>
+    <div class="play-title" id="playTitle">Game</div>
+  </div>
+  <iframe id="game-frame" src="" allowfullscreen></iframe>
+</div>
+
+<footer>
+  <p style="margin-bottom:0.5rem;">⚡ TheBoltGames — Free Online Games</p>
+  <p>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="#">Contact</a>
+  </p>
+  <p style="margin-top:0.5rem; font-size:0.75rem;">© 2026 TheBoltGames. All rights reserved.</p>
+</footer>
+
+<script>
+  function playGame(name, url, e) {
+    e.preventDefault();
+    document.getElementById('playTitle').textContent = name;
+    document.getElementById('game-frame').src = url;
+    document.getElementById('play-page').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closGame() {
+    document.getElementById('play-page').classList.remove('active');
+    document.getElementById('game-frame').src = '';
+    document.body.style.overflow = '';
+  }
+
+  function filterCategory(cat, btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.game-card').forEach(card => {
+      if (cat === 'all') {
+        card.style.display = '';
+      } else {
+        const cardCat = card.getAttribute('data-cat');
+        card.style.display = (cardCat === cat) ? '' : 'none';
+      }
+    });
+  }
+
+  function filterGames() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.game-card').forEach(card => {
+      const title = card.querySelector('.game-title').textContent.toLowerCase();
+      card.style.display = title.includes(q) ? '' : 'none';
+    });
+  }
+</script>
+
+</body>
+</html>
+```
+
+Copy everything inside the code block, paste it into GitHub, then hit **Commit changes**!
