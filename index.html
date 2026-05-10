@@ -2,30 +2,29 @@
 <html lang="en">
 <head>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-6Z8LSD8JGF"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-6Z8LSD8JGF');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6Z8LSD8JGF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-6Z8LSD8JGF');
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TheBoltGames - Free Online Games</title>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1445791688950169" crossorigin="anonymous"></script>
   <meta name="description" content="Play free online games instantly. No downloads, no signups. Just click and play."/>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #0a0a0f;
-      --surface: #12121a;
-      --card: #1a1a26;
-      --border: #2a2a3a;
-      --accent: #f5c400;
-      --accent2: #ff4d4d;
-      --text: #e8e8f0;
-      --muted: #6b6b80;
+      --bg: #07050f;
+      --surface: #120d1f;
+      --card: #160f24;
+      --border: #2a1f3d;
+      --pink: #ff2d78;
+      --rose: #ff6b9d;
+      --text: #f0e8ff;
+      --muted: #7a6899;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,19 +32,112 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Barlow', sans-serif;
+      font-family: 'Outfit', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
+    }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #loader.hide { opacity: 0; visibility: hidden; }
+
+    .loader-bolt {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 2rem;
+      animation: boltPulse 1.5s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px var(--pink)) drop-shadow(0 0 40px var(--rose));
+    }
+
+    @keyframes boltPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px var(--pink)) drop-shadow(0 0 40px var(--rose)); }
+      50% { transform: scale(1.2); filter: drop-shadow(0 0 40px var(--pink)) drop-shadow(0 0 80px var(--rose)); }
+    }
+
+    .loader-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--pink), var(--rose), #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .loader-bar {
+      width: 200px;
+      height: 2px;
+      background: var(--border);
+      margin-top: 1.5rem;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .loader-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--pink), var(--rose));
+      animation: loadFill 1.8s ease forwards;
+      box-shadow: 0 0 10px var(--pink);
+    }
+
+    @keyframes loadFill {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.2; }
+      100% { transform: translateY(-10vh); opacity: 0; }
     }
 
     body::before {
       content: '';
       position: fixed;
       inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(255,45,120,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,107,157,0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
       background-image:
-        linear-gradient(rgba(245,196,0,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(245,196,0,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
+        linear-gradient(rgba(255,45,120,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,45,120,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
       pointer-events: none;
       z-index: 0;
     }
@@ -54,41 +146,69 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(10,10,15,0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
+      background: rgba(7,5,15,0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,45,120,0.12);
+      padding: 0 2.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 64px;
+      height: 68px;
     }
 
     .logo {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 900;
-      letter-spacing: 0.05em;
-      color: var(--accent);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
       text-decoration: none;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      text-transform: uppercase;
     }
 
-    .logo span { color: var(--text); }
-    .logo-bolt { font-size: 1.5rem; }
-    nav { display: flex; gap: 1.5rem; align-items: center; }
+    .logo-icon {
+      font-size: 1.5rem;
+      animation: iconGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes iconGlow {
+      0%, 100% { filter: drop-shadow(0 0 6px var(--pink)); }
+      50% { filter: drop-shadow(0 0 14px var(--pink)) drop-shadow(0 0 28px var(--rose)); }
+    }
+
+    .logo-the { color: var(--muted); }
+    .logo-bolt { color: var(--pink); }
+    .logo-games { color: var(--text); }
+
+    nav { display: flex; gap: 2rem; align-items: center; }
+
     nav a {
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 500;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       transition: color 0.2s;
+      position: relative;
     }
-    nav a:hover { color: var(--accent); }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--pink);
+      transition: width 0.3s;
+      box-shadow: 0 0 6px var(--pink);
+    }
+
+    nav a:hover { color: var(--pink); }
+    nav a:hover::after { width: 100%; }
 
     .hero {
       position: relative;
@@ -97,184 +217,344 @@
       padding: 5rem 2rem 3rem;
     }
 
+    #bolt-canvas {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 2rem;
+    }
+
+    .bolt-3d {
+      width: 100%;
+      height: 100%;
+      animation: spin3d 8s linear infinite;
+      filter: drop-shadow(0 0 25px var(--pink)) drop-shadow(0 0 50px var(--rose));
+    }
+
+    @keyframes spin3d {
+      0% { transform: rotateY(0deg) scale(1); filter: drop-shadow(0 0 25px var(--pink)) drop-shadow(0 0 50px var(--rose)); }
+      25% { transform: rotateY(90deg) scale(0.65); filter: drop-shadow(0 0 8px var(--pink)); }
+      50% { transform: rotateY(180deg) scale(1); filter: drop-shadow(0 0 25px var(--rose)) drop-shadow(0 0 50px var(--pink)); }
+      75% { transform: rotateY(270deg) scale(0.65); filter: drop-shadow(0 0 8px var(--rose)); }
+      100% { transform: rotateY(360deg) scale(1); filter: drop-shadow(0 0 25px var(--pink)) drop-shadow(0 0 50px var(--rose)); }
+    }
+
     .hero-badge {
-      display: inline-block;
-      background: rgba(245,196,0,0.1);
-      border: 1px solid rgba(245,196,0,0.3);
-      color: var(--accent);
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,45,120,0.08);
+      border: 1px solid rgba(255,45,120,0.22);
+      color: var(--rose);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      padding: 0.35rem 1rem;
-      border-radius: 2px;
+      padding: 0.4rem 1.2rem;
+      border-radius: 100px;
       margin-bottom: 1.5rem;
     }
 
     .hero h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(2rem, 6vw, 4rem);
-      font-weight: 900;
-      line-height: 1.1;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 700;
+      line-height: 1.05;
       margin-bottom: 1rem;
-      letter-spacing: -0.02em;
+      text-transform: uppercase;
     }
 
-    .hero h1 .highlight { color: var(--accent); }
+    .line1 { color: var(--text); display: block; }
+    .line2 {
+      background: linear-gradient(135deg, var(--pink), var(--rose), #ffb3cc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+    }
 
     .hero p {
       color: var(--muted);
-      font-size: 1.1rem;
-      max-width: 500px;
-      margin: 0 auto 2rem;
-      line-height: 1.6;
+      font-size: 1rem;
+      max-width: 420px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+      font-weight: 300;
     }
 
-    .search-bar {
-      max-width: 480px;
+    .search-wrap {
+      max-width: 500px;
       margin: 0 auto 3rem;
       position: relative;
     }
 
-    .search-bar input {
+    .search-wrap input {
       width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: rgba(22,15,36,0.8);
+      border: 1px solid rgba(255,45,120,0.18);
       color: var(--text);
-      padding: 0.9rem 1.2rem 0.9rem 3rem;
-      font-family: 'Barlow', sans-serif;
-      font-size: 1rem;
-      border-radius: 4px;
+      padding: 1rem 1.5rem 1rem 3.5rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      border-radius: 100px;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
     }
 
-    .search-bar input:focus { border-color: var(--accent); }
-    .search-bar input::placeholder { color: var(--muted); }
+    .search-wrap input:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(255,45,120,0.1), 0 0 20px rgba(255,45,120,0.08);
+    }
+
+    .search-wrap input::placeholder { color: var(--muted); }
 
     .search-icon {
       position: absolute;
-      left: 1rem;
+      left: 1.2rem;
       top: 50%;
       transform: translateY(-50%);
+      color: var(--pink);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-bottom: 3rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-num {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--pink), var(--rose));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
       color: var(--muted);
-      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
     }
 
     .categories {
       position: relative;
       z-index: 1;
       display: flex;
-      gap: 0.5rem;
+      gap: 0.6rem;
       justify-content: center;
       flex-wrap: wrap;
       padding: 0 2rem 3rem;
     }
 
     .cat-btn {
-      background: var(--surface);
+      background: rgba(22,15,36,0.6);
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 0.5rem 1.2rem;
-      font-family: 'Barlow', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
+      padding: 0.5rem 1.4rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      border-radius: 2px;
+      border-radius: 100px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
     }
 
     .cat-btn:hover, .cat-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #000;
+      background: linear-gradient(135deg, var(--pink), var(--rose));
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255,45,120,0.35), 0 4px 15px rgba(255,45,120,0.15);
+      transform: translateY(-1px);
+    }
+
+    .ad-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 0 2rem 3rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .ad-slot {
+      background: rgba(22,15,36,0.4);
+      border: 1px dashed rgba(255,45,120,0.12);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,45,120,0.25);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      width: 100%;
+      max-width: 728px;
+      height: 90px;
     }
 
     .section {
       position: relative;
       z-index: 1;
-      max-width: 1300px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 0 2rem 4rem;
+      padding: 0 2rem 5rem;
     }
 
     .section-header {
       display: flex;
       align-items: center;
       gap: 1rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
 
-    .section-header h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1rem;
+    .section-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.85rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--text);
+      color: var(--pink);
+      white-space: nowrap;
     }
 
-    .section-line { flex: 1; height: 1px; background: var(--border); }
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,45,120,0.3), transparent);
+    }
 
     .game-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
     }
 
     .game-card {
-      background: var(--card);
+      background: rgba(22,15,36,0.7);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 16px;
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       text-decoration: none;
       display: block;
-      animation: fadeUp 0.4s ease both;
+      backdrop-filter: blur(10px);
+      position: relative;
+      animation: cardIn 0.5s ease both;
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,45,120,0.06), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      border-radius: 16px;
+      z-index: 1;
+      pointer-events: none;
     }
 
     .game-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      box-shadow: 0 8px 32px rgba(245,196,0,0.15);
+      transform: translateY(-6px) scale(1.01);
+      border-color: rgba(255,45,120,0.35);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(255,45,120,0.08);
     }
 
-    .game-thumb-placeholder {
+    .game-card:hover::before { opacity: 1; }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .game-card:nth-child(1) { animation-delay: 0.05s; }
+    .game-card:nth-child(2) { animation-delay: 0.1s; }
+    .game-card:nth-child(3) { animation-delay: 0.15s; }
+    .game-card:nth-child(4) { animation-delay: 0.2s; }
+    .game-card:nth-child(5) { animation-delay: 0.25s; }
+    .game-card:nth-child(6) { animation-delay: 0.3s; }
+    .game-card:nth-child(7) { animation-delay: 0.35s; }
+    .game-card:nth-child(8) { animation-delay: 0.4s; }
+    .game-card:nth-child(9) { animation-delay: 0.45s; }
+
+    .game-thumb {
       width: 100%;
       aspect-ratio: 16/10;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
-      background: linear-gradient(135deg, var(--surface), var(--border));
+      font-size: 3rem;
+      background: linear-gradient(135deg, rgba(255,45,120,0.06), rgba(255,107,157,0.03));
+      position: relative;
     }
 
-    .game-info { padding: 0.75rem 1rem; }
+    .game-card.featured { grid-column: span 2; }
+    .game-card.featured .game-thumb { aspect-ratio: 16/7; font-size: 4rem; }
+
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+      background: rgba(7,5,15,0.3);
+    }
+
+    .game-card:hover .play-overlay { opacity: 1; }
+
+    .play-btn-circle {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--pink), var(--rose));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 0 25px rgba(255,45,120,0.5);
+      transform: scale(0.8);
+      transition: transform 0.3s;
+    }
+
+    .game-card:hover .play-btn-circle { transform: scale(1); }
+
+    .game-info { padding: 1rem 1.2rem; }
 
     .game-title {
-      font-weight: 600;
-      font-size: 0.9rem;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
       color: var(--text);
       margin-bottom: 0.25rem;
+      letter-spacing: 0.03em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      transition: color 0.2s;
     }
 
     .game-tag {
-      font-size: 0.75rem;
-      color: var(--muted);
+      font-size: 0.7rem;
+      color: var(--pink);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.12em;
+      font-weight: 500;
     }
 
-    .game-card:hover .game-title { color: var(--accent); }
-
-    .game-card.featured { grid-column: span 2; }
-    .game-card.featured .game-thumb-placeholder { aspect-ratio: 16/7; font-size: 4rem; }
+    .game-card:hover .game-title { color: var(--rose); }
 
     #play-page {
       display: none;
@@ -291,29 +571,42 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 0.75rem 1.5rem;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 1.5rem;
+      background: rgba(7,5,15,0.95);
+      border-bottom: 1px solid rgba(255,45,120,0.12);
+      backdrop-filter: blur(10px);
     }
 
     .back-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.4rem 1rem;
-      font-family: 'Barlow', sans-serif;
+      background: rgba(255,45,120,0.1);
+      border: 1px solid rgba(255,45,120,0.25);
+      color: var(--rose);
+      padding: 0.45rem 1.2rem;
+      font-family: 'Outfit', sans-serif;
       font-size: 0.85rem;
+      font-weight: 500;
       cursor: pointer;
-      border-radius: 2px;
+      border-radius: 100px;
       transition: all 0.2s;
     }
 
-    .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .back-btn:hover {
+      background: var(--pink);
+      border-color: var(--pink);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255,45,120,0.4);
+    }
 
     .play-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.9rem;
-      color: var(--accent);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--pink), var(--rose));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     #game-frame { flex: 1; width: 100%; border: none; background: #000; }
@@ -321,77 +614,122 @@
     footer {
       position: relative;
       z-index: 1;
-      border-top: 1px solid var(--border);
-      padding: 2rem;
+      border-top: 1px solid rgba(255,45,120,0.08);
+      padding: 2.5rem;
       text-align: center;
       color: var(--muted);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
     }
 
-    footer a { color: var(--muted); text-decoration: none; margin: 0 0.5rem; }
-    footer a:hover { color: var(--accent); }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .game-card:nth-child(1) { animation-delay: 0.05s; }
-    .game-card:nth-child(2) { animation-delay: 0.1s; }
-    .game-card:nth-child(3) { animation-delay: 0.15s; }
-    .game-card:nth-child(4) { animation-delay: 0.2s; }
-    .game-card:nth-child(5) { animation-delay: 0.25s; }
-    .game-card:nth-child(6) { animation-delay: 0.3s; }
-    .game-card:nth-child(7) { animation-delay: 0.35s; }
-    .game-card:nth-child(8) { animation-delay: 0.4s; }
-
-    .ad-slot {
-      background: var(--surface);
-      border: 1px dashed var(--border);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-size: 0.75rem;
+    .footer-logo {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
       letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin: 0 auto 2rem;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, var(--pink), var(--rose));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .ad-slot-banner { width: 100%; max-width: 728px; height: 90px; }
+    footer a { color: var(--muted); text-decoration: none; margin: 0 0.75rem; transition: color 0.2s; }
+    footer a:hover { color: var(--pink); }
 
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
       .game-card.featured { grid-column: span 1; }
       nav { display: none; }
+      .stats { gap: 1.5rem; }
     }
   </style>
 </head>
 <body>
 
+<!-- LOADER -->
+<div id="loader">
+  <svg class="loader-bolt" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="lg1" x1="0" y1="0" x2="100" y2="140" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ff2d78"/>
+        <stop offset="100%" stop-color="#ff6b9d"/>
+      </linearGradient>
+    </defs>
+    <polygon points="60,5 20,75 50,75 40,135 80,60 50,60 70,5" fill="url(#lg1)"/>
+  </svg>
+  <div class="loader-text">TheBoltGames</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- PARTICLES -->
+<div id="particles"></div>
+
+<!-- HEADER -->
 <header>
   <a class="logo" href="#">
-    <span class="logo-bolt">⚡</span>The<span>Bolt</span>Games
+    <span class="logo-icon">⚡</span>
+    <span class="logo-the">The</span><span class="logo-bolt">Bolt</span><span class="logo-games">Games</span>
   </a>
   <nav>
     <a href="#">Home</a>
     <a href="#">Action</a>
-    <a href="#">Puzzle</a>
     <a href="#">Racing</a>
     <a href="#">Sports</a>
+    <a href="#">Puzzle</a>
   </nav>
 </header>
 
+<!-- HERO -->
 <div class="hero">
+  <div id="bolt-canvas">
+    <svg class="bolt-3d" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="hg1" x1="0" y1="0" x2="100" y2="140" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#ff2d78"/>
+          <stop offset="50%" stop-color="#ff6b9d"/>
+          <stop offset="100%" stop-color="#ffb3cc"/>
+        </linearGradient>
+        <linearGradient id="hg2" x1="100" y1="0" x2="0" y2="140" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#ff2d78" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#ff6b9d" stop-opacity="0.05"/>
+        </linearGradient>
+      </defs>
+      <polygon points="60,5 20,75 50,75 40,135 80,60 50,60 70,5" fill="url(#hg1)"/>
+      <polygon points="60,5 20,75 50,75 40,135 80,60 50,60 70,5" fill="url(#hg2)" transform="translate(8,8)"/>
+    </svg>
+  </div>
+
   <div class="hero-badge">⚡ 100% Free — No Download — Play Instantly</div>
-  <h1>Play Games.<br><span class="highlight">Anywhere. Anytime.</span></h1>
+
+  <h1>
+    <span class="line1">Play Games.</span>
+    <span class="line2">Anywhere. Anytime.</span>
+  </h1>
+
   <p>Hundreds of free online games. Click and play instantly — no sign up required.</p>
-  <div class="search-bar">
+
+  <div class="search-wrap">
     <span class="search-icon">🔍</span>
     <input type="text" id="searchInput" placeholder="Search games..." oninput="filterGames()"/>
   </div>
 </div>
 
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Free</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">0</div>
+    <div class="stat-label">Downloads</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">∞</div>
+    <div class="stat-label">Fun</div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
 <div class="categories">
   <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
   <button class="cat-btn" onclick="filterCategory('action', this)">Action</button>
@@ -401,59 +739,63 @@
   <button class="cat-btn" onclick="filterCategory('io', this)">.io Games</button>
 </div>
 
-<div style="display:flex; justify-content:center; padding: 0 2rem 2rem; position:relative; z-index:1;">
-  <div class="ad-slot ad-slot-banner">Ad</div>
+<!-- AD -->
+<div class="ad-wrap">
+  <div class="ad-slot">Ad</div>
 </div>
 
+<!-- GAMES -->
 <div class="section">
   <div class="section-header">
-    <h2>🔥 Featured</h2>
+    <div class="section-title">🔥 Featured Games</div>
     <div class="section-line"></div>
   </div>
   <div class="game-grid" id="gameGrid">
 
     <a class="game-card featured" href="#" data-cat="action" onclick="playGame('Slope', 'https://kdata1.com/2020/05/slope/', event)">
-      <div class="game-thumb-placeholder">🏂</div>
+      <div class="game-thumb">🏂<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Slope</div><div class="game-tag">Action</div></div>
     </a>
 
     <a class="game-card" href="#" data-cat="sports" onclick="playGame('Basket Hoop', 'https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/311/basket-hoop/index-gg.html', event)">
-      <div class="game-thumb-placeholder">🏀</div>
+      <div class="game-thumb">🏀<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Basket Hoop</div><div class="game-tag">Sports</div></div>
     </a>
 
     <a class="game-card" href="#" data-cat="io" onclick="playGame('Snake', 'https://app-166898.games.s3.yandex.net/166898/h3jf3ub31har8v0hgbipacz7zf4z8kt7/index.html', event)">
-      <div class="game-thumb-placeholder">🐍</div>
+      <div class="game-thumb">🐍<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Snake</div><div class="game-tag">.io Games</div></div>
     </a>
 
     <a class="game-card" href="#" data-cat="action" onclick="playGame('Run 3', 'https://realpeanut.github.io/games/run3/index.html', event)">
-      <div class="game-thumb-placeholder">🏃</div>
+      <div class="game-thumb">🏃<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Run 3</div><div class="game-tag">Action</div></div>
     </a>
 
     <a class="game-card" href="#" data-cat="racing" onclick="playGame('Drift Hunters', 'https://23azostore.github.io/s/drift-hunters/', event)">
-      <div class="game-thumb-placeholder">🚗</div>
+      <div class="game-thumb">🚗<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Drift Hunters</div><div class="game-tag">Racing</div></div>
     </a>
 
     <a class="game-card" href="#" data-cat="action" onclick="playGame('Stickman Parkour', 'https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/219/stickman-parkour/index-gg.html', event)">
-      <div class="game-thumb-placeholder">🧗</div>
+      <div class="game-thumb">🧗<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Stickman Parkour</div><div class="game-tag">Action</div></div>
     </a>
 
     <a class="game-card" href="#" data-cat="racing" onclick="playGame('Drift Boss', 'https://ubg98.github.io/DriftBoss/', event)">
-      <div class="game-thumb-placeholder">🏎️</div>
+      <div class="game-thumb">🏎️<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Drift Boss</div><div class="game-tag">Racing</div></div>
     </a>
 
     <a class="game-card" href="#" data-cat="action" onclick="playGame('Fireboy & Watergirl 3', 'https://fireboyandwatergirlunblocked.github.io/3/', event)">
-      <div class="game-thumb-placeholder">🔥</div>
+      <div class="game-thumb">🔥<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Fireboy & Watergirl 3</div><div class="game-tag">Action</div></div>
     </a>
+
   </div>
 </div>
 
+<!-- PLAY PAGE -->
 <div id="play-page">
   <div class="play-header">
     <button class="back-btn" onclick="closGame()">← Back</button>
@@ -462,15 +804,35 @@
   <iframe id="game-frame" src="" allowfullscreen></iframe>
 </div>
 
+<!-- FOOTER -->
 <footer>
-  <p style="margin-bottom:0.5rem;">⚡ TheBoltGames — Free Online Games</p>
-  <p>
-    <a href="privacy.html">Privacy Policy</a>
-  </p>
-  <p style="margin-top:0.5rem; font-size:0.75rem;">© 2026 TheBoltGames. All rights reserved.</p>
+  <div class="footer-logo">⚡ TheBoltGames</div>
+  <p style="margin-bottom:0.75rem;"><a href="privacy.html">Privacy Policy</a></p>
+  <p style="font-size:0.75rem;">© 2026 TheBoltGames. All rights reserved.</p>
 </footer>
 
 <script>
+  // LOADER
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loader').classList.add('hide'), 2000);
+  });
+
+  // PARTICLES
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left:${Math.random()*100}vw;
+      width:${1+Math.random()*2}px;
+      height:${1+Math.random()*2}px;
+      background:${Math.random()>.5?'#ff2d78':'#ff6b9d'};
+      animation-duration:${10+Math.random()*15}s;
+      animation-delay:${Math.random()*10}s;
+    `;
+    pc.appendChild(p);
+  }
+
   function playGame(name, url, e) {
     e.preventDefault();
     document.getElementById('playTitle').textContent = name;
@@ -489,23 +851,16 @@
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.querySelectorAll('.game-card').forEach(card => {
-      if (cat === 'all') {
-        card.style.display = '';
-      } else {
-        const cardCat = card.getAttribute('data-cat');
-        card.style.display = (cardCat === cat) ? '' : 'none';
-      }
+      card.style.display = (cat === 'all' || card.getAttribute('data-cat') === cat) ? '' : 'none';
     });
   }
 
   function filterGames() {
     const q = document.getElementById('searchInput').value.toLowerCase();
     document.querySelectorAll('.game-card').forEach(card => {
-      const title = card.querySelector('.game-title').textContent.toLowerCase();
-      card.style.display = title.includes(q) ? '' : 'none';
+      card.style.display = card.querySelector('.game-title').textContent.toLowerCase().includes(q) ? '' : 'none';
     });
   }
 </script>
-
 </body>
 </html>
