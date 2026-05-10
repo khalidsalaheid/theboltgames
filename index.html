@@ -37,66 +37,6 @@
       overflow-x: hidden;
     }
 
-    #loader {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.8s ease, visibility 0.8s ease;
-    }
-
-    #loader.hide { opacity: 0; visibility: hidden; }
-
-    .loader-bolt {
-      width: 90px;
-      height: 90px;
-      margin-bottom: 2rem;
-      animation: boltPulse 1.5s ease-in-out infinite;
-      filter: drop-shadow(0 0 20px var(--pink)) drop-shadow(0 0 40px var(--rose));
-    }
-
-    @keyframes boltPulse {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px var(--pink)) drop-shadow(0 0 40px var(--rose)); }
-      50% { transform: scale(1.2); filter: drop-shadow(0 0 40px var(--pink)) drop-shadow(0 0 80px var(--rose)); }
-    }
-
-    .loader-text {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, var(--pink), var(--rose), #fff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .loader-bar {
-      width: 200px;
-      height: 2px;
-      background: var(--border);
-      margin-top: 1.5rem;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .loader-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--pink), var(--rose));
-      animation: loadFill 1.8s ease forwards;
-      box-shadow: 0 0 10px var(--pink);
-    }
-
-    @keyframes loadFill {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-
     #particles {
       position: fixed;
       inset: 0;
@@ -645,21 +585,6 @@
 </head>
 <body>
 
-<!-- LOADER -->
-<div id="loader">
-  <svg class="loader-bolt" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="lg1" x1="0" y1="0" x2="100" y2="140" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#ff2d78"/>
-        <stop offset="100%" stop-color="#ff6b9d"/>
-      </linearGradient>
-    </defs>
-    <polygon points="60,5 20,75 50,75 40,135 80,60 50,60 70,5" fill="url(#lg1)"/>
-  </svg>
-  <div class="loader-text">TheBoltGames</div>
-  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
-</div>
-
 <!-- PARTICLES -->
 <div id="particles"></div>
 
@@ -812,11 +737,6 @@
 </footer>
 
 <script>
-  // LOADER
-  window.addEventListener('load', () => {
-    setTimeout(() => document.getElementById('loader').classList.add('hide'), 2000);
-  });
-
   // PARTICLES
   const pc = document.getElementById('particles');
   for (let i = 0; i < 20; i++) {
