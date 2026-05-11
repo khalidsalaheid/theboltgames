@@ -110,10 +110,7 @@
       text-transform: uppercase;
     }
 
-    .logo-icon {
-      font-size: 1.5rem;
-      animation: iconGlow 2s ease-in-out infinite;
-    }
+    .logo-icon { font-size: 1.5rem; animation: iconGlow 2s ease-in-out infinite; }
 
     @keyframes iconGlow {
       0%, 100% { filter: drop-shadow(0 0 6px var(--pink)); }
@@ -166,11 +163,7 @@
       padding: 5rem 2rem 3rem;
     }
 
-    #bolt-canvas {
-      width: 150px;
-      height: 150px;
-      margin: 0 auto 2rem;
-    }
+    #bolt-canvas { width: 150px; height: 150px; margin: 0 auto 2rem; }
 
     .bolt-3d {
       width: 100%;
@@ -506,61 +499,6 @@
 
     .game-card:hover .game-title { color: var(--rose); }
 
-    #play-page {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 200;
-      flex-direction: column;
-    }
-
-    #play-page.active { display: flex; }
-
-    .play-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.8rem 1.5rem;
-      background: rgba(7,5,15,0.95);
-      border-bottom: 1px solid rgba(255,45,120,0.12);
-      backdrop-filter: blur(10px);
-    }
-
-    .back-btn {
-      background: rgba(255,45,120,0.1);
-      border: 1px solid rgba(255,45,120,0.25);
-      color: var(--rose);
-      padding: 0.45rem 1.2rem;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      border-radius: 100px;
-      transition: all 0.2s;
-    }
-
-    .back-btn:hover {
-      background: var(--pink);
-      border-color: var(--pink);
-      color: #fff;
-      box-shadow: 0 0 15px rgba(255,45,120,0.4);
-    }
-
-    .play-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, var(--pink), var(--rose));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    #game-frame { flex: 1; width: 100%; border: none; background: #000; }
-
     footer {
       position: relative;
       z-index: 1;
@@ -598,16 +536,16 @@
 <div id="particles"></div>
 
 <header>
-  <a class="logo" href="#">
+  <a class="logo" href="/">
     <span class="logo-icon">⚡</span>
     <span class="logo-the">The</span><span class="logo-bolt">Bolt</span><span class="logo-games">Games</span>
   </a>
   <nav>
-    <a href="#">Home</a>
-    <a href="#">Action</a>
-    <a href="#">Racing</a>
-    <a href="#">Sports</a>
-    <a href="#">Puzzle</a>
+    <a href="/">Home</a>
+    <a href="#" onclick="filterCategory('action', this)">Action</a>
+    <a href="#" onclick="filterCategory('racing', this)">Racing</a>
+    <a href="#" onclick="filterCategory('sports', this)">Sports</a>
+    <a href="#" onclick="filterCategory('puzzle', this)">Puzzle</a>
   </nav>
   <div style="display:flex; gap:1rem; align-items:center;">
     <a href="https://www.youtube.com/@theboltgames1" target="_blank" style="color:var(--pink); text-decoration:none; transition:opacity 0.2s; filter:drop-shadow(0 0 6px var(--pink));" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
@@ -688,52 +626,52 @@
   </div>
   <div class="game-grid" id="gameGrid">
 
-    <a class="game-card featured" href="#" data-cat="action" onclick="playGame('Slope', 'https://kdata1.com/2020/05/slope/', event)">
+    <a class="game-card featured" href="/slope" data-cat="action">
       <div class="game-thumb">🏂<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Slope</div><div class="game-tag">Action</div></div>
     </a>
 
-    <a class="game-card" href="#" data-cat="sports" onclick="playGame('Basket Hoop', 'https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/311/basket-hoop/index-gg.html', event)">
+    <a class="game-card" href="/basket-hoop" data-cat="sports">
       <div class="game-thumb">🏀<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Basket Hoop</div><div class="game-tag">Sports</div></div>
     </a>
 
-    <a class="game-card" href="#" data-cat="io" onclick="playGame('Snake', 'https://app-166898.games.s3.yandex.net/166898/h3jf3ub31har8v0hgbipacz7zf4z8kt7/index.html', event)">
+    <a class="game-card" href="/snake" data-cat="io">
       <div class="game-thumb">🐍<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Snake</div><div class="game-tag">.io Games</div></div>
     </a>
 
-    <a class="game-card" href="#" data-cat="action" onclick="playGame('Run 3', 'https://realpeanut.github.io/games/run3/index.html', event)">
+    <a class="game-card" href="/run3" data-cat="action">
       <div class="game-thumb">🏃<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Run 3</div><div class="game-tag">Action</div></div>
     </a>
 
-    <a class="game-card" href="#" data-cat="racing" onclick="playGame('Drift Hunters', 'https://23azostore.github.io/s/drift-hunters/', event)">
+    <a class="game-card" href="/drift-hunters" data-cat="racing">
       <div class="game-thumb">🚗<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Drift Hunters</div><div class="game-tag">Racing</div></div>
     </a>
 
-    <a class="game-card" href="#" data-cat="action" onclick="playGame('Stickman Parkour', 'https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/219/stickman-parkour/index-gg.html', event)">
+    <a class="game-card" href="/stickman-parkour" data-cat="action">
       <div class="game-thumb">🧗<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Stickman Parkour</div><div class="game-tag">Action</div></div>
     </a>
 
-    <a class="game-card" href="#" data-cat="racing" onclick="playGame('Drift Boss', 'https://ubg98.github.io/DriftBoss/', event)">
+    <a class="game-card" href="/drift-boss" data-cat="racing">
       <div class="game-thumb">🏎️<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Drift Boss</div><div class="game-tag">Racing</div></div>
     </a>
 
-    <a class="game-card" href="#" data-cat="action" onclick="playGame('Fireboy & Watergirl 3', 'https://fireboyandwatergirlunblocked.github.io/3/', event)">
+    <a class="game-card" href="/fireboy-watergirl" data-cat="action">
       <div class="game-thumb">🔥<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Fireboy & Watergirl 3</div><div class="game-tag">Action</div></div>
     </a>
 
-    <a class="game-card" href="#" data-cat="racing" onclick="playGame('Snow Rider 3D', 'https://bestgradex.com/games/snow-rider-3d/index.html', event)">
+    <a class="game-card" href="/snow-rider" data-cat="racing">
       <div class="game-thumb">🏔️<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Snow Rider 3D</div><div class="game-tag">Racing</div></div>
     </a>
 
-    <a class="game-card" href="#" data-cat="sports" onclick="playGame('Basketball Random', 'https://hhsbest.github.io/bkrndom/', event)">
+    <a class="game-card" href="/basketball-random" data-cat="sports">
       <div class="game-thumb">🏀<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
       <div class="game-info"><div class="game-title">Basketball Random</div><div class="game-tag">Sports</div></div>
     </a>
@@ -741,17 +679,9 @@
   </div>
 </div>
 
-<div id="play-page">
-  <div class="play-header">
-    <button class="back-btn" onclick="closGame()">← Back</button>
-    <div class="play-title" id="playTitle">Game</div>
-  </div>
-  <iframe id="game-frame" src="" allowfullscreen></iframe>
-</div>
-
 <footer>
   <div class="footer-logo">⚡ TheBoltGames</div>
-  <p style="margin-bottom:0.75rem;"><a href="privacy.html">Privacy Policy</a></p>
+  <p style="margin-bottom:0.75rem;"><a href="/privacy.html">Privacy Policy</a></p>
   <p style="font-size:0.75rem;">© 2026 TheBoltGames. All rights reserved.</p>
 </footer>
 
@@ -771,23 +701,9 @@
     pc.appendChild(p);
   }
 
-  function playGame(name, url, e) {
-    e.preventDefault();
-    document.getElementById('playTitle').textContent = name;
-    document.getElementById('game-frame').src = url;
-    document.getElementById('play-page').classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closGame() {
-    document.getElementById('play-page').classList.remove('active');
-    document.getElementById('game-frame').src = '';
-    document.body.style.overflow = '';
-  }
-
-  function filterCategory(cat, btn) {
+  function filterCategory(cat, el) {
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if (el && el.classList) el.classList.add('active');
     document.querySelectorAll('.game-card').forEach(card => {
       card.style.display = (cat === 'all' || card.getAttribute('data-cat') === cat) ? '' : 'none';
     });
