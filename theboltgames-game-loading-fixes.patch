@@ -1,0 +1,686 @@
+From 18ce348d5e8106b04c08bdc4e45c3fb5ce23db9b Mon Sep 17 00:00:00 2001
+From: KatDev <khalid11eid@gmail.com>
+Date: Mon, 26 Oct 2026 12:50:27 -0500
+Subject: [PATCH] Fix game navigation and recoverable player loading
+
+---
+ .gitignore                   |  2 +
+ README.md                    | 50 +++++++++++++++++++-
+ basket-hoop/index.html       | 12 ++++-
+ basketball-random/index.html | 12 ++++-
+ drift-boss/index.html        | 12 ++++-
+ drift-hunters/index.html     | 12 ++++-
+ fireboy-watergirl/index.html | 12 ++++-
+ index.html                   | 26 +++++------
+ package-lock.json            | 42 +++++++++++++++++
+ package.json                 |  6 +++
+ player.css                   | 15 ++++++
+ player.js                    | 30 ++++++++++++
+ privacy.html                 |  2 +-
+ run3/index.html              | 12 ++++-
+ slope/index.html             | 12 ++++-
+ snake/index.html             | 12 ++++-
+ snow-rider/index.html        | 12 ++++-
+ stickman-parkour/index.html  | 12 ++++-
+ tests/navigation.test.cjs    | 90 ++++++++++++++++++++++++++++++++++++
+ 19 files changed, 348 insertions(+), 35 deletions(-)
+ create mode 100644 .gitignore
+ create mode 100644 package-lock.json
+ create mode 100644 package.json
+ create mode 100644 player.css
+ create mode 100644 player.js
+ create mode 100644 tests/navigation.test.cjs
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..ae2f532
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,2 @@
++node_modules/
++test-results/
+diff --git a/README.md b/README.md
+index 9fcba93..58e737a 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,49 @@
+-# theboltgames
+\ No newline at end of file
++# TheBoltGames — original browser game directory
++
++Static HTML site with ten game pages. Each game runs in an external host's iframe; game binaries are not stored in this repository.
++
++## Local preview
++
++Run `python3 -m http.server 8000` from this folder and open `http://localhost:8000/`.
++Links are relative, so the same files work at a domain root or under a path such as `/theboltgames/`.
++
++## Regression tests
++
++Requires Node.js 20 or newer:
++
++```sh
++npm ci
++npx playwright install chromium
++npm test
++```
++
++The browser tests click all ten cards at both hosting paths, check Back and Privacy navigation, exercise iframe retry, verify mobile player dimensions, and check recovery controls after network/fullscreen failures. External responses are mocked in these tests so third-party outages cannot conceal a local navigation regression. They do not establish live game availability.
++
++## Player maintenance
++
++Each game folder's `index.html` contains the iframe source and matching Open game link. Update both when changing a host. `player.css` and `player.js` provide the shared layout, retry and fullscreen controls. Links and frames work without JavaScript; enhanced buttons are shown when supported.
++
++A cross-origin iframe's `load` event cannot prove that its game started. The player deliberately keeps recovery controls visible even after that event. Open game lets the visitor try the source in a separate tab if embedding fails. External hosts, network policies, and browser WebGL support can still affect play.
++
++## Hosting note (October 26, 2026)
++
++`theboltgames.com` currently redirects to `www.theboltgames.com`, which serves the separate Bolt Games studio site. Committing this repository does not change that site's domain mapping. The existing `CNAME` is retained; hosting/domain settings need to be considered separately before publishing this directory. No studio repository or domain configuration was modified by the game-loading repair.
++
++## Live browser verification — October 26, 2026
++
++Tested the repaired local site in Chromium with WebGL enabled, entering each page through its homepage card:
++
++| Game | Observed result |
++| --- | --- |
++| Slope | Started a run using the replacement host; two optional host images returned 404. |
++| Snow Rider 3D | Replacement host reached a run and score/restart screen. |
++| Run 3 | Started a tunnel run. |
++| Snake | Started a round and reached the game-over screen. |
++| Drift Hunters | Selected a track and reached the driving scene. |
++| Basketball Random | Selected one player and reached the court; host script errors did not stop play. |
++| Fireboy & Watergirl 3 | Entered the first level; an external analytics JSON error did not stop play. |
++| Stickman Parkour | Dismissed the host's ad and entered level 1. |
++| Basket Hoop | Passed the splash screen and reached the interactive tap-to-dunk tutorial. |
++| Drift Boss | Passed booster selection and entered the driving tutorial. |
++
++These are startup smoke checks, not full-game or all-device certification. The mobile checks cover our toolbar and player area, not every external game's touch controls. The original Slope host returned a blocking 403 page. The original Snow Rider host returned 403 to an HTTP probe but loaded an extra Play gate in Chromium; its replacement reached the game directly. The eight remaining sources were retained after browser checks.
+diff --git a/basket-hoop/index.html b/basket-hoop/index.html
+index 6fee520..a69c37f 100644
+--- a/basket-hoop/index.html
++++ b/basket-hoop/index.html
+@@ -23,12 +23,20 @@
+     .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(135deg, #ff2d78, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+     iframe { flex: 1; width: 100%; border: none; background: #000; }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Basket Hoop</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/311/basket-hoop/index-gg.html" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/311/basket-hoop/index-gg.html" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/311/basket-hoop/index-gg.html" id="game-frame" title="Basket Hoop game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/basketball-random/index.html b/basketball-random/index.html
+index a9eb113..eaf10fb 100644
+--- a/basketball-random/index.html
++++ b/basketball-random/index.html
+@@ -23,12 +23,20 @@
+     .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(135deg, #ff2d78, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+     iframe { flex: 1; width: 100%; border: none; background: #000; }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Basketball Random</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://hhsbest.github.io/bkrndom/" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://hhsbest.github.io/bkrndom/" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://hhsbest.github.io/bkrndom/" id="game-frame" title="Basketball Random game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/drift-boss/index.html b/drift-boss/index.html
+index 5109538..851eb5f 100644
+--- a/drift-boss/index.html
++++ b/drift-boss/index.html
+@@ -23,12 +23,20 @@
+     .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(135deg, #ff2d78, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+     iframe { flex: 1; width: 100%; border: none; background: #000; }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Drift Boss</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://ubg98.github.io/DriftBoss/" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://ubg98.github.io/DriftBoss/" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://ubg98.github.io/DriftBoss/" id="game-frame" title="Drift Boss game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/drift-hunters/index.html b/drift-hunters/index.html
+index fc342d5..0977231 100644
+--- a/drift-hunters/index.html
++++ b/drift-hunters/index.html
+@@ -23,12 +23,20 @@
+     .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(135deg, #ff2d78, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+     iframe { flex: 1; width: 100%; border: none; background: #000; }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Drift Hunters</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://23azostore.github.io/s/drift-hunters/" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://23azostore.github.io/s/drift-hunters/" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://23azostore.github.io/s/drift-hunters/" id="game-frame" title="Drift Hunters game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/fireboy-watergirl/index.html b/fireboy-watergirl/index.html
+index 8185f41..eccffdd 100644
+--- a/fireboy-watergirl/index.html
++++ b/fireboy-watergirl/index.html
+@@ -23,12 +23,20 @@
+     .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(135deg, #ff2d78, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+     iframe { flex: 1; width: 100%; border: none; background: #000; }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Fireboy & Watergirl 3</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://fireboyandwatergirlunblocked.github.io/3/" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://fireboyandwatergirlunblocked.github.io/3/" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://fireboyandwatergirlunblocked.github.io/3/" id="game-frame" title="Fireboy &amp; Watergirl 3 game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/index.html b/index.html
+index 5578047..a3d4927 100644
+--- a/index.html
++++ b/index.html
+@@ -536,12 +536,12 @@
+ <div id="particles"></div>
+ 
+ <header>
+-  <a class="logo" href="/">
++  <a class="logo" href="./">
+     <span class="logo-icon">⚡</span>
+     <span class="logo-the">The</span><span class="logo-bolt">Bolt</span><span class="logo-games">Games</span>
+   </a>
+   <nav>
+-    <a href="/">Home</a>
++    <a href="./">Home</a>
+     <a href="#" onclick="filterCategory('action', this)">Action</a>
+     <a href="#" onclick="filterCategory('racing', this)">Racing</a>
+     <a href="#" onclick="filterCategory('sports', this)">Sports</a>
+@@ -626,52 +626,52 @@
+   </div>
+   <div class="game-grid" id="gameGrid">
+ 
+-    <a class="game-card featured" href="/slope" data-cat="action">
++    <a class="game-card featured" href="./slope/" data-cat="action">
+       <div class="game-thumb">🏂<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Slope</div><div class="game-tag">Action</div></div>
+     </a>
+ 
+-    <a class="game-card" href="/basket-hoop" data-cat="sports">
++    <a class="game-card" href="./basket-hoop/" data-cat="sports">
+       <div class="game-thumb">🏀<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Basket Hoop</div><div class="game-tag">Sports</div></div>
+     </a>
+ 
+-    <a class="game-card" href="/snake" data-cat="io">
++    <a class="game-card" href="./snake/" data-cat="io">
+       <div class="game-thumb">🐍<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Snake</div><div class="game-tag">.io Games</div></div>
+     </a>
+ 
+-    <a class="game-card" href="/run3" data-cat="action">
++    <a class="game-card" href="./run3/" data-cat="action">
+       <div class="game-thumb">🏃<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Run 3</div><div class="game-tag">Action</div></div>
+     </a>
+ 
+-    <a class="game-card" href="/drift-hunters" data-cat="racing">
++    <a class="game-card" href="./drift-hunters/" data-cat="racing">
+       <div class="game-thumb">🚗<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Drift Hunters</div><div class="game-tag">Racing</div></div>
+     </a>
+ 
+-    <a class="game-card" href="/stickman-parkour" data-cat="action">
++    <a class="game-card" href="./stickman-parkour/" data-cat="action">
+       <div class="game-thumb">🧗<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Stickman Parkour</div><div class="game-tag">Action</div></div>
+     </a>
+ 
+-    <a class="game-card" href="/drift-boss" data-cat="racing">
++    <a class="game-card" href="./drift-boss/" data-cat="racing">
+       <div class="game-thumb">🏎️<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Drift Boss</div><div class="game-tag">Racing</div></div>
+     </a>
+ 
+-    <a class="game-card" href="/fireboy-watergirl" data-cat="action">
++    <a class="game-card" href="./fireboy-watergirl/" data-cat="action">
+       <div class="game-thumb">🔥<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Fireboy & Watergirl 3</div><div class="game-tag">Action</div></div>
+     </a>
+ 
+-    <a class="game-card" href="/snow-rider" data-cat="racing">
++    <a class="game-card" href="./snow-rider/" data-cat="racing">
+       <div class="game-thumb">🏔️<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Snow Rider 3D</div><div class="game-tag">Racing</div></div>
+     </a>
+ 
+-    <a class="game-card" href="/basketball-random" data-cat="sports">
++    <a class="game-card" href="./basketball-random/" data-cat="sports">
+       <div class="game-thumb">🏀<div class="play-overlay"><div class="play-btn-circle">▶</div></div></div>
+       <div class="game-info"><div class="game-title">Basketball Random</div><div class="game-tag">Sports</div></div>
+     </a>
+@@ -681,7 +681,7 @@
+ 
+ <footer>
+   <div class="footer-logo">⚡ TheBoltGames</div>
+-  <p style="margin-bottom:0.75rem;"><a href="/privacy.html">Privacy Policy</a></p>
++  <p style="margin-bottom:0.75rem;"><a href="./privacy.html">Privacy Policy</a></p>
+   <p style="font-size:0.75rem;">© 2026 TheBoltGames. All rights reserved.</p>
+ </footer>
+ 
+diff --git a/package-lock.json b/package-lock.json
+new file mode 100644
+index 0000000..bb5ca55
+--- /dev/null
++++ b/package-lock.json
+@@ -0,0 +1,42 @@
++{
++  "name": "theboltgames",
++  "lockfileVersion": 3,
++  "requires": true,
++  "packages": {
++    "": {
++      "name": "theboltgames",
++      "devDependencies": {
++        "playwright": "1.64.1"
++      }
++    },
++    "node_modules/playwright": {
++      "version": "1.64.1",
++      "resolved": "https://registry.npmjs.org/playwright/-/playwright-1.64.1.tgz",
++      "integrity": "sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCfVURu7UA==",
++      "dev": true,
++      "license": "Apache-2.0",
++      "dependencies": {
++        "playwright-core": "1.64.1"
++      },
++      "bin": {
++        "playwright": "cli.js"
++      },
++      "engines": {
++        "node": ">=20"
++      }
++    },
++    "node_modules/playwright-core": {
++      "version": "1.64.1",
++      "resolved": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.64.1.tgz",
++      "integrity": "sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==",
++      "dev": true,
++      "license": "Apache-2.0",
++      "bin": {
++        "playwright-core": "cli.js"
++      },
++      "engines": {
++        "node": ">=20"
++      }
++    }
++  }
++}
+diff --git a/package.json b/package.json
+new file mode 100644
+index 0000000..38e4a7d
+--- /dev/null
++++ b/package.json
+@@ -0,0 +1,6 @@
++{
++  "name": "theboltgames",
++  "private": true,
++  "scripts": { "test": "node --test tests/navigation.test.cjs" },
++  "devDependencies": { "playwright": "1.64.1" }
++}
+diff --git a/player.css b/player.css
+new file mode 100644
+index 0000000..cdb9796
+--- /dev/null
++++ b/player.css
+@@ -0,0 +1,15 @@
++/* Shared player layout: keep the game usable below a wrapping mobile toolbar. */
++body { height: 100vh; height: 100dvh; }
++.top-bar { flex: 0 0 auto; flex-wrap: wrap; gap: 0.6rem; }
++.player-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-left: auto; }
++.back-btn { display: inline-block; }
++.back-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
++[hidden] { display: none !important; }
++#player-status { flex: 0 0 auto; color: #cdbbdf; padding: 0.5rem 1rem; font-size: 0.8rem; line-height: 1.4; }
++#game-frame { display: block; flex: 1 1 0; min-height: 0; width: 100%; }
++#game-frame:fullscreen { height: 100%; background: #000; }
++@media (max-width: 640px) {
++  .top-bar { padding: 0.6rem; }
++  .player-actions { margin-left: 0; width: 100%; }
++  .back-btn { padding: 0.4rem 0.8rem; }
++}
+diff --git a/player.js b/player.js
+new file mode 100644
+index 0000000..b22bee4
+--- /dev/null
++++ b/player.js
+@@ -0,0 +1,30 @@
++(() => {
++  const frame = document.getElementById('game-frame');
++  const status = document.getElementById('player-status');
++  const retry = document.getElementById('retry-game');
++  const fullscreen = document.getElementById('fullscreen-game');
++  const hint = 'Click inside the game to play. If it stays blank, try Retry or Open game.';
++
++  // Cross-origin frames can fire load even for error pages. Never report that
++  // a game is playable based on this event, or hide the recovery controls.
++  frame.addEventListener('load', () => { status.textContent = hint; });
++  frame.addEventListener('error', () => {
++    status.textContent = 'The game could not be loaded. Try Retry or Open game.';
++  });
++  retry.hidden = false;
++  retry.addEventListener('click', () => {
++    status.textContent = 'Reloading the game. If it stays blank, try Open game.';
++    frame.src = frame.getAttribute('src');
++  });
++  if (document.fullscreenEnabled && frame.requestFullscreen) {
++    fullscreen.hidden = false;
++    fullscreen.addEventListener('click', async () => {
++      try {
++        await frame.requestFullscreen();
++        frame.focus();
++      } catch {
++        status.textContent = 'Fullscreen is unavailable. You can use Open game instead.';
++      }
++    });
++  }
++})();
+diff --git a/privacy.html b/privacy.html
+index 01b5d76..ea9cc13 100644
+--- a/privacy.html
++++ b/privacy.html
+@@ -31,6 +31,6 @@
+   <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
+   <h2>Contact</h2>
+   <p>If you have any questions about this Privacy Policy contact us at: realmatiofan@gmail.com</p>
+-  <p style="margin-top:3rem;"><a href="/">← Back to TheBoltGames</a></p>
++  <p style="margin-top:3rem;"><a href="./">← Back to TheBoltGames</a></p>
+ </body>
+ </html>
+diff --git a/run3/index.html b/run3/index.html
+index cf10a55..13c0016 100644
+--- a/run3/index.html
++++ b/run3/index.html
+@@ -23,12 +23,20 @@
+     .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(135deg, #ff2d78, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+     iframe { flex: 1; width: 100%; border: none; background: #000; }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Run 3</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://realpeanut.github.io/games/run3/index.html" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://realpeanut.github.io/games/run3/index.html" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://realpeanut.github.io/games/run3/index.html" id="game-frame" title="Run 3 game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/slope/index.html b/slope/index.html
+index bb6fbdb..2bbb706 100644
+--- a/slope/index.html
++++ b/slope/index.html
+@@ -59,12 +59,20 @@
+       background: #000;
+     }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Slope</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://z10p.github.io/slope/" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://kdata1.com/2020/05/slope/" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://z10p.github.io/slope/" id="game-frame" title="Slope game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/snake/index.html b/snake/index.html
+index ed1d758..4247380 100644
+--- a/snake/index.html
++++ b/snake/index.html
+@@ -23,12 +23,20 @@
+     .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(135deg, #ff2d78, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+     iframe { flex: 1; width: 100%; border: none; background: #000; }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Snake</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://app-166898.games.s3.yandex.net/166898/h3jf3ub31har8v0hgbipacz7zf4z8kt7/index.html" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://app-166898.games.s3.yandex.net/166898/h3jf3ub31har8v0hgbipacz7zf4z8kt7/index.html" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://app-166898.games.s3.yandex.net/166898/h3jf3ub31har8v0hgbipacz7zf4z8kt7/index.html" id="game-frame" title="Snake game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/snow-rider/index.html b/snow-rider/index.html
+index f76ba33..b214da8 100644
+--- a/snow-rider/index.html
++++ b/snow-rider/index.html
+@@ -23,12 +23,20 @@
+     .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(135deg, #ff2d78, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+     iframe { flex: 1; width: 100%; border: none; background: #000; }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Snow Rider 3D</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://snow-rider3d.github.io/file/" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://bestgradex.com/games/snow-rider-3d/index.html" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://snow-rider3d.github.io/file/" id="game-frame" title="Snow Rider 3D game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/stickman-parkour/index.html b/stickman-parkour/index.html
+index de6cd25..0ed21c5 100644
+--- a/stickman-parkour/index.html
++++ b/stickman-parkour/index.html
+@@ -23,12 +23,20 @@
+     .game-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: linear-gradient(135deg, #ff2d78, #ff6b9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+     iframe { flex: 1; width: 100%; border: none; background: #000; }
+   </style>
++  <link rel="stylesheet" href="../player.css"/>
++  <script src="../player.js" defer></script>
+ </head>
+ <body>
+   <div class="top-bar">
+-    <a class="back-btn" href="/">← Back</a>
++    <a class="back-btn" href="../">← Back</a>
+     <div class="game-title">Stickman Parkour</div>
++    <div class="player-actions">
++      <button class="back-btn" id="retry-game" type="button" hidden>Retry</button>
++      <button class="back-btn" id="fullscreen-game" type="button" hidden>Fullscreen</button>
++      <a class="back-btn" href="https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/219/stickman-parkour/index-gg.html" target="_blank" rel="noopener noreferrer">Open game ↗</a>
++    </div>
+   </div>
+-  <iframe src="https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/219/stickman-parkour/index-gg.html" allowfullscreen></iframe>
++  <p id="player-status" role="status">Click inside the game to play. If it stays blank, try Retry or Open game.</p>
++  <iframe src="https://d11jzht7mj96rr.cloudfront.net/games/2024/construct/219/stickman-parkour/index-gg.html" id="game-frame" title="Stickman Parkour game" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+ </body>
+ </html>
+diff --git a/tests/navigation.test.cjs b/tests/navigation.test.cjs
+new file mode 100644
+index 0000000..ad9a575
+--- /dev/null
++++ b/tests/navigation.test.cjs
+@@ -0,0 +1,90 @@
++const { test, before, after } = require('node:test');
++const assert = require('node:assert/strict');
++const { createServer } = require('node:http');
++const { readFile } = require('node:fs/promises');
++const path = require('node:path');
++const { chromium } = require('playwright');
++const root = path.resolve(__dirname, '..');
++let browser, server, origin;
++before(async () => {
++  server = createServer(async (req, res) => {
++    let name = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
++    name = name.replace(/^\/theboltgames(?=\/)/, '');
++    if (name.endsWith('/')) name += 'index.html';
++    const file = path.resolve(root, '.' + name);
++    if (!file.startsWith(root + path.sep)) { res.writeHead(403).end(); return; }
++    try {
++      const data = await readFile(file);
++      res.setHeader('Content-Type', ({'.html':'text/html','.js':'text/javascript','.css':'text/css'})[path.extname(file)] || 'application/octet-stream');
++      res.end(data);
++    } catch { res.writeHead(404).end(); }
++  });
++  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
++  origin = `http://127.0.0.1:${server.address().port}`;
++  browser = await chromium.launch();
++});
++after(async () => { await browser?.close(); await new Promise(resolve => server.close(resolve)); });
++
++for (const base of ['/', '/theboltgames/']) {
++  test(`all ten cards, players, retry and back links at ${base}`, async () => {
++    const page = await browser.newPage();
++    const requests = [];
++    // Isolate our routing/controls from third-party uptime. Live gameplay is a separate manual check.
++    await page.route('**/*', route => {
++      const url = route.request().url();
++      if (url.startsWith(origin)) return route.continue();
++      requests.push(url);
++      return route.fulfill({contentType:'text/html', body:'<button>Mock game</button>'});
++    });
++    await page.goto(origin + base);
++    const links = await page.locator('.game-card').evaluateAll(cards => cards.map(c => c.getAttribute('href')));
++    assert.equal(links.length, 10);
++    for (const href of links) {
++      await page.locator(`.game-card[href="${href}"]`).click();
++      assert.equal(page.url(), new URL(href, origin + base).href);
++      const frame = page.locator('#game-frame');
++      const src = await frame.getAttribute('src');
++      assert.ok(src.startsWith('https://'));
++      assert.ok(await frame.getAttribute('title'));
++      assert.equal(await page.getByRole('link', {name:'Open game'}).getAttribute('href'), src);
++      await page.frameLocator('#game-frame').getByRole('button', {name:'Mock game'}).waitFor();
++      const beforeRetry = requests.filter(u => u === src).length;
++      await page.getByRole('button', {name:'Retry', exact:true}).click();
++      await page.frameLocator('#game-frame').getByRole('button', {name:'Mock game'}).waitFor();
++      assert.ok(requests.filter(u => u === src).length > beforeRetry);
++      await page.setViewportSize({width:390,height:844});
++      const box = await frame.boundingBox();
++      assert.ok(box.height > 400 && box.width <= 390);
++      assert.ok(box.y + box.height <= 845);
++      await page.getByRole('link', {name:'← Back'}).click();
++      assert.equal(page.url(), origin + base);
++    }
++    await page.getByRole('link', {name:'Privacy Policy'}).click();
++    assert.equal(page.url(), origin + base + 'privacy.html');
++    await page.close();
++  });
++}
++test('failed external frame retains recovery; fullscreen failure is handled', async () => {
++  const page = await browser.newPage();
++  await page.route('**/*', route => route.request().url().startsWith(origin) ? route.continue() : route.abort());
++  await page.goto(origin + '/slope/');
++  assert.ok(await page.getByRole('button', {name:'Retry', exact:true}).isVisible());
++  assert.ok(await page.getByRole('link', {name:'Open game'}).isVisible());
++  assert.match(await page.locator('#player-status').innerText(), /Retry|Open game/);
++  await page.evaluate(() => { document.getElementById('game-frame').requestFullscreen = () => Promise.reject(new Error('Unavailable')); });
++  await page.getByRole('button', {name:'Fullscreen', exact:true}).click();
++  await page.getByRole('status').filter({hasText:'Fullscreen is unavailable'}).waitFor();
++  await page.close();
++});
++test('game links and external fallback remain available without JavaScript', async () => {
++  const page = await browser.newPage({javaScriptEnabled:false});
++  await page.route('**/*', route => route.request().url().startsWith(origin) ? route.continue() : route.fulfill({body:'Game placeholder'}));
++  await page.goto(origin + '/theboltgames/');
++  await page.locator('.game-card').first().click();
++  assert.equal(page.url(), origin + '/theboltgames/slope/');
++  assert.ok(await page.getByRole('link', {name:'Open game'}).isVisible());
++  assert.equal(await page.getByRole('button', {name:'Retry', exact:true}).count(), 0);
++  await page.getByRole('link', {name:'← Back'}).click();
++  assert.equal(page.url(), origin + '/theboltgames/');
++  await page.close();
++});
+-- 
+2.39.5 (Apple Git-154)
+
